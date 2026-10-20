@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173f35">
+  <meta name="description" content="A simple food diary to track meals and nutrition.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>Fuel — Food Tracker</title>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand"><div class="logo" aria-hidden="true">🥑</div><div><h1>Fuel</h1><p>Your daily food diary</p></div></div>
+      <label class="date-label">DATE<input id="dayPicker" type="date" aria-label="Choose diary date"></label>
+    </header>
+
+    <section class="card overview" aria-labelledby="overviewTitle">
+      <div class="section-heading"><div><h2 id="overviewTitle">Today's overview</h2><p>Your food, all in one place.</p></div><span class="big-emoji" aria-hidden="true">🍽️</span></div>
+      <div class="stats">
+        <div class="stat"><span>ENERGY LOGGED</span><strong id="totalKcal">0</strong><small>kcal</small></div>
+        <div class="stat"><span>FOODS EATEN</span><strong id="foodCount">0</strong><small>entries</small></div>
+      </div>
+      <h3 class="subhead">Nutrition breakdown</h3>
+      <div class="macro"><div><span>Protein</span><b id="proteinValue">0 g</b></div><div class="track"><i id="proteinBar"></i></div></div>
+      <div class="macro"><div><span>Carbohydrates</span><b id="carbsValue">0 g</b></div><div class="track"><i id="carbsBar"></i></div></div>
+      <div class="macro"><div><span>Fat</span><b id="fatValue">0 g</b></div><div class="track"><i id="fatBar"></i></div></div>
+      <p class="note">These totals describe what you've logged, not a recommended daily limit. Food values are estimates.</p>
+    </section>
+
+    <section class="card" aria-labelledby="addTitle">
+      <h2 id="addTitle">Add food</h2><p class="intro">Search a food or enter its nutrition details.</p>
+      <label for="searchFood">Find a food</label>
+      <input id="searchFood" class="field" type="search" placeholder="e.g. banana, porridge, chicken" autocomplete="off">
+      <div class="scanner-actions">
+        <button id="openScanner" class="secondary" type="button">▦ Scan barcode with camera</button>
+        <button id="manualBarcode" class="secondary" type="button">Enter barcode</button>
+      </div>
+      <p class="scanner-help">Barcode lookup uses Open Food Facts when internet access is available. You can also enter nutrition details manually.</p>
+      <div id="scannerPanel" class="scanner-panel" hidden>
+        <div class="scanner-top"><strong>Scan a product barcode</strong><button id="closeScanner" class="icon-button" type="button" aria-label="Close scanner">✕</button></div>
+        <video id="scannerVideo" playsinline muted></video>
+        <p id="scannerStatus" class="scanner-status" role="status">Allow camera access to scan a barcode.</p>
+        <div class="scanner-manual"><label for="barcodeInput">Or type the barcode number</label><div class="barcode-entry"><input id="barcodeInput" class="field" inputmode="numeric" autocomplete="off" placeholder="e.g. 5000159484695"><button id="lookupBarcode" class="primary" type="button">Look up</button></div></div>
+      </div>
+      <div id="suggestions" class="suggestions" aria-live="polite"></div>
+      <form id="foodForm">
+        <h3 class="subhead">Food details</h3>
+        <label for="foodName">Food name</label><input id="foodName" class="field" required maxlength="100" placeholder="e.g. Homemade sandwich">
+        <div class="form-grid">
+          <div><label for="portion">Portion / serving</label><input id="portion" class="field" maxlength="60" placeholder="e.g. 1 bowl"></div>
+          <div><label for="meal">Meal</label><select id="meal" class="field"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snacks</option></select></div>
+          <div><label for="kcal">Energy (kcal)</label><input id="kcal" class="field" type="number" min="0" max="10000" step="any" required placeholder="0"></div>
+          <div><label for="protein">Protein (g)</label><input id="protein" class="field" type="number" min="0" max="1000" step="any" required placeholder="0"></div>
+          <div><label for="carbs">Carbs (g)</label><input id="carbs" class="field" type="number" min="0" max="1000" step="any" required placeholder="0"></div>
+          <div><label for="fat">Fat (g)</label><input id="fat" class="field" type="number" min="0" max="1000" step="any" required placeholder="0"></div>
+        </div>
+        <button class="primary full" type="submit">＋ Add to food diary</button>
+        <p id="formMessage" class="message" role="status"></p>
+      </form>
+    </section>
+
+    <section class="card" aria-labelledby="diaryTitle">
+      <div class="diary-heading"><div><h2 id="diaryTitle">Food diary</h2><p id="diarySummary">Nothing logged yet</p></div><button id="clearDay" class="secondary" type="button">Clear day</button></div>
+      <div id="diary"></div>
+    </section>
+    <footer><p>Fuel stores entries on this device only. Nutrition values vary by brand, recipe and portion; check packaging for the most accurate figures.</p><button id="exportCsv" class="text-button" type="button">Export diary as CSV</button></footer>
+  </main>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
+    }
+  </script>
+</body>
+</html>
